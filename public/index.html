@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Shop Dashboard — Visual Editor</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<h1>Shop Dashboard — Visual Editor</h1>
+
+<div class="row">
+  <label>Server:</label>
+  <select id="serverSelect"></select>
+
+  <label>Shop:</label>
+  <select id="shopSelect"></select>
+
+  <button id="loadBtn">Load</button>
+  <button id="saveBtn">Save</button>
+
+  <button id="createShopBtn">Create Shop</button>
+  <button id="deleteShopBtn" class="danger">Delete Shop</button>
+</div>
+
+<div class="card">
+  <div class="formRow">
+    <div><b>Shop Title</b></div>
+    <input id="shopTitle" />
+  </div>
+  <div class="hint">Edits <code>shop.title</code>. Filename is unchanged.</div>
+</div>
+
+<div class="status" id="status">Ready.</div>
+
+<!-- GRID FIRST -->
+<div class="card">
+  <div class="gridWrap">
+    <div class="pages" id="pages"></div>
+    <div class="grid" id="grid"></div>
+  </div>
+</div>
+
+<!-- EDITOR BELOW (mobile-friendly) -->
+<div class="card">
+  <b>Slot Editor</b>
+  <div id="editorEmpty" class="hint">Tap a slot to edit or create an entry.</div>
+
+  <div id="editorPanel" style="display:none;">
+    <div class="formRow">
+      <div>Entry ID</div>
+      <input id="entryId" />
+    </div>
+
+    <div class="formRow">
+      <div>Item ID</div>
+      <input id="itemId" />
+    </div>
+
+    <div class="formRow">
+      <div>Slot</div>
+      <input id="slotIndex" disabled />
+    </div>
+
+    <div class="formRow">
+      <div>Buy</div>
+      <input id="buyPrice" type="number" />
+    </div>
+
+    <div class="formRow">
+      <div>Sell</div>
+      <input id="sellPrice" type="number" />
+    </div>
+
+    <div class="row">
+      <button id="applyBtn">Apply</button>
+      <button id="deleteEntryBtn" class="danger">Delete Entry</button>
+    </div>
+  </div>
+
+  <details>
+    <summary><b>JSON Preview</b></summary>
+    <textarea id="rawJson" readonly></textarea>
+  </details>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
