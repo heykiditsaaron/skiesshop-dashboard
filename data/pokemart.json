@@ -1,0 +1,14 @@
+{
+  "title": "Poké Mart (Edited)",
+  "type": "GENERIC_9x6",
+  "entries": {
+    "test_item": {
+      "type": "ITEM",
+      "slot": 0,
+      "page": [
+        1
+      ],
+      "item": "minecraft:dirt"
+    }
+  }
+}
