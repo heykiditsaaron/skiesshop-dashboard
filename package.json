@@ -7,8 +7,23 @@
     "start": "node index.js"
   },
   "dependencies": {
-  "express": "^4.19.2",
-  "ssh2-sftp-client": "^11.0.0",
-  "dotenv": "^16.4.5"
-  }
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.1",
+    "ssh2-sftp-client": "^11.0.0"
+  },
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heykiditsaaron/skiesshop-dashboard.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/heykiditsaaron/skiesshop-dashboard/issues"
+  },
+  "homepage": "https://github.com/heykiditsaaron/skiesshop-dashboard#readme"
 }

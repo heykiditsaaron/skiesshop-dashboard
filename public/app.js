@@ -1,5 +1,15 @@
 const $ = id => document.getElementById(id);
 
+/*
+  ===== FIXED ECONOMY CONFIG =====
+  For now, ALL entries use the same economy and currency.
+  This avoids UI complexity and schema corruption.
+
+  If you ever change this later, this is the ONLY place.
+*/
+const FIXED_ECONOMY = 'IMPACTOR';
+const FIXED_CURRENCY = 'impactor:pokedollars';
+
 const state = {
   servers: [],
   shops: [],
@@ -26,8 +36,7 @@ function pagesOf() {
 
 function addPage() {
   const pages = pagesOf();
-  const next = pages.length ? Math.max(...pages) + 1 : 1;
-  state.page = next;
+  state.page = Math.max(...pages) + 1;
   render();
 }
 
@@ -54,10 +63,10 @@ function buildSaveJson() {
     e.slot = m.slot;
     e.page = m.pages;
 
-    if (m.buy != null) e.buy = { price: m.buy };
+    if (m.buy) e.buy = m.buy;
     else delete e.buy;
 
-    if (m.sell != null) e.sell = { price: m.sell };
+    if (m.sell) e.sell = m.sell;
     else delete e.sell;
 
     out.entries[id] = e;
@@ -114,36 +123,17 @@ function renderGrid() {
       (map[i].length > 1 ? ' conflict' : '');
 
     const entryId = map[i][0];
-let iconHtml = '';
-let label = '(empty)';
+    if (!entryId) c.classList.add('empty');
 
-if (entryId) {
-  const m = state.models.get(entryId);
-  label = entryId;
-
-  if (m?.item && m.item.includes(':')) {
-    const itemName = m.item.split(':')[1];
-    const url = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20/assets/minecraft/textures/item/${itemName}.png`;
-
-    iconHtml = `<img class="cellIcon" src="${url}" onerror="this.style.display='none'">`;
-  }
-} else {
-  c.classList.add('empty');
-}
-
-c.innerHTML = `
-  <div class="slotLabel">Slot ${i}</div>
-  <div class="cellContent">
-    ${iconHtml}
-    <div class="cellMain">${label}</div>
-  </div>
-  <div class="cellSub">${map[i].length > 1 ? 'CONFLICT' : ''}</div>
-`;
-
+    c.innerHTML = `
+      <div class="cellContent">
+        <div class="cellMain">${entryId || '(empty)'}</div>
+      </div>
+    `;
 
     c.onclick = () => {
       state.slot = i;
-      state.entryId = map[i][0] || null;
+      state.entryId = entryId || null;
       render();
     };
 
@@ -173,8 +163,8 @@ function renderEditor() {
   const m = state.models.get(state.entryId);
   $('entryId').value = m.id;
   $('itemId').value = m.item;
-  $('buyPrice').value = m.buy ?? '';
-  $('sellPrice').value = m.sell ?? '';
+  $('buyPrice').value = m.buy?.price ?? '';
+  $('sellPrice').value = m.sell?.price ?? '';
 }
 
 /* ---------------- API ---------------- */
@@ -223,8 +213,8 @@ async function loadShop() {
       item: e.item || '',
       slot: e.slot,
       pages: e.page || [1],
-      buy: e.buy?.price ?? null,
-      sell: e.sell?.price ?? null,
+      buy: e.buy ? clone(e.buy) : null,
+      sell: e.sell ? clone(e.sell) : null,
       raw: clone(e)
     });
   });
@@ -266,8 +256,20 @@ $('applyBtn').onclick = () => {
   m.item = $('itemId').value;
   m.slot = state.slot;
   m.pages = m.pages?.length ? m.pages : [state.page];
-  m.buy = $('buyPrice').value === '' ? null : +$('buyPrice').value;
-  m.sell = $('sellPrice').value === '' ? null : +$('sellPrice').value;
+
+  const buyPrice = $('buyPrice').value;
+  m.buy = buyPrice === '' ? null : {
+    price: Number(buyPrice),
+    economy: FIXED_ECONOMY,
+    currency: FIXED_CURRENCY
+  };
+
+  const sellPrice = $('sellPrice').value;
+  m.sell = sellPrice === '' ? null : {
+    price: Number(sellPrice),
+    economy: FIXED_ECONOMY,
+    currency: FIXED_CURRENCY
+  };
 
   state.models.delete(state.entryId);
   state.models.set(id, m);
