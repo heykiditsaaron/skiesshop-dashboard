@@ -1,4 +1,4 @@
-import { state, clone, pagesOf, gridMap } from './state.js';
+﻿import { state, clone, pagesOf, gridMap } from './state.js';
 import { renderPages, renderGrid } from './renderGrid.js';
 import { renderEditor } from './renderEditor.js';
 import {
@@ -261,6 +261,8 @@ async function loadCurrentShop() {
   state.shopJson = await fetchShop(state.serverId, state.shopId);
 
   $('shopTitle').value = state.shopJson.title || '';
+  $('titleSection').style.display = '';
+  $('titleSection').style.display = '';
 
   state.models.clear();
   Object.entries(state.shopJson.entries || {}).forEach(([id, e]) => {
@@ -545,6 +547,21 @@ $('importFile').onchange = async e => {
 
 $('slotFilter').oninput = () => render();
 
+const titleSection = document.getElementById('titleSection');
+if (titleSection) titleSection.style.display = 'none';
+
+const toggleFilter = $('toggleFilter');
+if (toggleFilter) {
+  toggleFilter.onclick = () => {
+    const f = $('slotFilter');
+    if (!f) return;
+    const hidden = f.style.display === 'none';
+    f.style.display = hidden ? '' : 'none';
+    if (hidden) f.focus();
+    render();
+  };
+}
+
 document.addEventListener('keydown', e => {
   const key = e.key;
   const index = state.slot ?? 0;
@@ -570,6 +587,9 @@ $('sellPreset').onchange = () => {
   const v = $('sellPreset').value;
   if (v) $('sellPrice').value = v;
 };
+
+// Initial render so the grid shows even before a shop is loaded.
+render();
 
 (async () => {
   await hydrateServers();
@@ -629,3 +649,23 @@ function initTheme() {
 }
 
 initTheme();
+const toggleControlsBtn = $('toggleControls');
+if (toggleControlsBtn) {
+  toggleControlsBtn.onclick = () => {
+    const panel = document.querySelector('.panel--controls');
+    if (!panel) return;
+    const collapsed = panel.getAttribute('data-collapsed') === 'true';
+    panel.setAttribute('data-collapsed', collapsed ? 'false' : 'true');
+  };
+}
+
+document.querySelectorAll('.toggleBtn').forEach(btn => {
+  btn.onclick = () => {
+    const targetId = btn.dataset.target;
+    if (!targetId) return;
+    const content = document.getElementById(targetId);
+    if (!content) return;
+    content.style.display = content.style.display === 'none' ? '' : 'none';
+  };
+});
+
