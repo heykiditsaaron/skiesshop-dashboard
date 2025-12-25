@@ -2,86 +2,184 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Shop Dashboard — Visual Editor</title>
+  <title>Shop Dashboard Visual Editor</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <div class="app">
+    <header class="hero">
+      <div class="hero__text">
+        <p class="eyebrow">Skies Shop</p>
+        <h1>Dashboard Visual Editor</h1>
+        <p class="lede">Manage shops, prices, and backups with a clear grid + slot editor.</p>
+      </div>
+      <div class="hero__right">
+        <div class="theme-toggle" aria-label="Theme">
+          <button id="themeSystemBtn" class="btn btn--ghost">System</button>
+          <button id="themeLightBtn" class="btn btn--ghost">Light</button>
+          <button id="themeDarkBtn" class="btn btn--ghost">Dark</button>
+        </div>
+        <div class="hero__status">
+          <div class="status-label">Status</div>
+          <div class="status-value" id="status">Ready.</div>
+          <div class="status-badge" id="unsavedBadge" style="display:none;">Unsaved changes</div>
+        </div>
+      </div>
+    </header>
 
-<h1>Shop Dashboard — Visual Editor</h1>
+    <section class="panel panel--controls">
+      <div class="controls-grid">
+        <div class="controls-block">
+          <div class="block-title">Shop Controls</div>
+          <div class="control-group two-col">
+            <div class="control">
+              <label for="serverSelect">Server</label>
+              <select id="serverSelect"></select>
+              <div class="control-actions row">
+                <button id="createShopBtn" class="btn">Create Shop</button>
+                <button id="deleteShopBtn" class="btn btn--danger">Delete Shop</button>
+              </div>
+            </div>
+            <div class="control">
+              <label for="shopSelect">Shop</label>
+              <select id="shopSelect"></select>
+              <div class="control-actions row">
+                <button id="loadBtn" class="btn">Load</button>
+                <button id="saveBtn" class="btn btn--primary">Save</button>
+              </div>
+              <div class="control-actions row">
+                <button id="exportBtn" class="btn btn--ghost">Export JSON</button>
+                <button id="importBtn" class="btn btn--ghost">Import JSON</button>
+                <input id="importFile" type="file" accept=".json,application/json" style="display:none;" />
+              </div>
+            </div>
+          </div>
+        </div>
 
-<div class="row">
-  <label>Server:</label>
-  <select id="serverSelect"></select>
+        <div class="controls-block">
+          <div class="block-title">Backups</div>
+          <div class="control-group">
+            <div class="control">
+              <label for="backupSelect">Available Backups</label>
+              <select id="backupSelect" aria-label="Backups"></select>
+            </div>
+          </div>
+          <div class="control-actions">
+            <button id="refreshBackupsBtn" type="button" class="btn">Refresh</button>
+            <button id="restoreBtn" type="button" class="btn btn--ghost">Restore Selected</button>
+          </div>
+        </div>
+      </div>
+    </section>
 
-  <label>Shop:</label>
-  <select id="shopSelect"></select>
+    <section class="panel panel--title">
+      <div class="formRow">
+        <div><b>Shop Title</b></div>
+        <input id="shopTitle" />
+      </div>
+      <div class="hint">Edits <code>shop.title</code>. Filename stays the same.</div>
+    </section>
 
-  <button id="loadBtn">Load</button>
-  <button id="saveBtn">Save</button>
+    <section class="panel panel--grid">
+      <div class="gridHeader">
+        <div class="pages" id="pages"></div>
+        <div class="gridMeta">
+          <div class="pageStats" id="pageStats"></div>
+          <input id="slotFilter" class="slotFilter" placeholder="Filter by entry or item..." />
+        </div>
+      </div>
+      <div class="gridWrap">
+        <div class="grid" id="grid"></div>
+      </div>
+      <div class="conflicts" id="conflictList"></div>
+    </section>
 
-  <button id="createShopBtn">Create Shop</button>
-  <button id="deleteShopBtn" class="danger">Delete Shop</button>
-</div>
+    <section class="panel panel--editor">
+      <div class="panel__header">
+        <div>
+          <p class="eyebrow">Slot Editor</p>
+          <h2>Edit entry details</h2>
+        </div>
+        <div class="pill" id="slotIndexPill">Slot <span id="slotIndexDisplay"></span></div>
+      </div>
 
-<div class="card">
-  <div class="formRow">
-    <div><b>Shop Title</b></div>
-    <input id="shopTitle" />
+      <div id="editorEmpty" class="empty">Tap a slot to edit or create an entry.</div>
+
+      <div id="editorPanel" class="editor-body" style="display:none;">
+        <div class="formRow">
+          <div>Entry ID</div>
+          <input id="entryId" />
+        </div>
+
+        <div class="formRow">
+          <div>Item ID</div>
+          <input id="itemId" />
+        </div>
+
+        <details class="panel panel--json">
+          <summary><b>Advanced display options</b></summary>
+          <div class="formRow">
+            <div>Display Name</div>
+            <input id="displayName" placeholder="Optional custom name" />
+          </div>
+
+          <div class="formRow">
+            <div>Display Item</div>
+            <input id="displayItem" placeholder="Optional override item id" />
+          </div>
+
+          <div class="formRow">
+            <div>Display Lore</div>
+            <textarea id="displayLore" placeholder="One line per lore entry"></textarea>
+          </div>
+        </details>
+
+        <div class="formRow">
+          <div>Buy Price</div>
+          <div class="priceSingle">
+            <input id="buyPrice" type="number" step="any" placeholder="Price" />
+            <select id="buyCurrency"></select>
+            <select id="buyPreset" class="presetSelect">
+              <option value="">Preset</option>
+              <option value="10">10</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+              <option value="500">500</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="formRow">
+          <div>Sell Price</div>
+          <div class="priceSingle">
+            <input id="sellPrice" type="number" step="any" placeholder="Price" />
+            <select id="sellCurrency"></select>
+            <select id="sellPreset" class="presetSelect">
+              <option value="">Preset</option>
+              <option value="10">10</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+              <option value="500">500</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row actions">
+          <button id="applyBtn" class="btn btn--primary">Apply</button>
+          <button id="deleteEntryBtn" class="btn btn--danger">Delete Entry</button>
+          <button id="duplicateEntryBtn" class="btn">Duplicate</button>
+          <button id="copyEntryBtn" class="btn btn--ghost">Copy</button>
+          <button id="pasteEntryBtn" class="btn btn--ghost">Paste</button>
+        </div>
+      </div>
+
+      <details class="panel panel--json">
+        <summary><b>JSON Preview</b></summary>
+        <textarea id="rawJson" readonly></textarea>
+      </details>
+    </section>
   </div>
-  <div class="hint">Edits <code>shop.title</code>. Filename is unchanged.</div>
-</div>
 
-<div class="status" id="status">Ready.</div>
-
-<div class="card">
-  <div class="gridWrap">
-    <div class="pages" id="pages"></div>
-    <div class="grid" id="grid"></div>
-  </div>
-</div>
-
-<div class="card">
-  <b>Slot Editor</b>
-  <div id="editorEmpty" class="hint">Tap a slot to edit or create an entry.</div>
-
-  <div id="editorPanel" style="display:none;">
-    <div class="formRow">
-      <div>Entry ID</div>
-      <input id="entryId" />
-    </div>
-
-    <div class="formRow">
-      <div>Item ID</div>
-      <input id="itemId" />
-    </div>
-
-    <div class="formRow">
-      <div>Slot</div>
-      <input id="slotIndex" disabled />
-    </div>
-
-    <div class="formRow">
-      <div>Buy Price</div>
-      <input id="buyPrice" type="number" />
-    </div>
-
-    <div class="formRow">
-      <div>Sell Price</div>
-      <input id="sellPrice" type="number" />
-    </div>
-
-    <div class="row">
-      <button id="applyBtn">Apply</button>
-      <button id="deleteEntryBtn" class="danger">Delete Entry</button>
-    </div>
-  </div>
-
-  <details>
-    <summary><b>JSON Preview</b></summary>
-    <textarea id="rawJson" readonly></textarea>
-  </details>
-</div>
-
-<script src="app.js"></script>
+  <script type="module" src="main.js"></script>
 </body>
 </html>
